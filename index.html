@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAP Prep Platform - Master Assessment Prep</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- NAVIGATION HEADER -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">MAP Prep</span>
+                </div>
+                <nav class="main-nav">
+                    <button class="nav-btn" onclick="goToHome()" title="Home">Home</button>
+                    <button class="nav-btn" onclick="goToStats()" title="Progress">Progress</button>
+                    <button class="nav-btn" onclick="toggleGlossary()" title="Dictionary">📖</button>
+                    <button class="nav-btn" onclick="toggleSettings()" title="Settings">⚙️</button>
+                </nav>
+                <div class="user-info">
+                    <span id="streakDisplay" class="streak-badge">🔥 0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <div class="container">
+            <!-- ========== HOME SCREEN ========== -->
+            <div id="homeScreen" class="screen active">
+                <div class="home-content">
+                    <!-- Welcome Section -->
+                    <div class="welcome-section">
+                        <h1>Welcome to MAP Prep</h1>
+                        <p class="subtitle">Complete preparation platform for MAP Growth assessments</p>
+                    </div>
+
+                    <!-- Quick Stats Bar -->
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-label">Questions Answered</div>
+                            <div class="stat-value" id="totalQuestionsAnswered">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value" id="accuracyDisplay">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Current Streak</div>
+                            <div class="stat-value" id="streakCountDisplay">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Study Time</div>
+                            <div class="stat-value" id="studyTimeDisplay">0h</div>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Section -->
+                    <div class="recommended-section">
+                        <h2>Recommended for You</h2>
+                        <div id="recommendedTopics" class="recommended-cards">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Study Modes Grid -->
+                    <div class="modes-container">
+                        <h2>Choose a Study Mode</h2>
+                        <div class="modes-grid">
+                            <!-- Study Mode -->
+                            <div class="mode-card" onclick="startStudyMode()">
+                                <div class="mode-icon">📚</div>
+                                <div class="mode-title">Study Mode</div>
+                                <div class="mode-description">Learn concepts with explanations and examples</div>
+                                <div class="mode-meta">Learn at your pace</div>
+                            </div>
+
+                            <!-- Practice Mode -->
+                            <div class="mode-card" onclick="startPracticeMode()">
+                                <div class="mode-icon">✏️</div>
+                                <div class="mode-title">Practice Mode</div>
+                                <div class="mode-description">Select topics and test your knowledge</div>
+                                <div class="mode-meta">Customizable</div>
+                            </div>
+
+                            <!-- Test Mode -->
+                            <div class="mode-card" onclick="startTestMode()">
+                                <div class="mode-icon">🎯</div>
+                                <div class="mode-title">Test Mode</div>
+                                <div class="mode-description">Full MAP-style adaptive test</div>
+                                <div class="mode-meta">15-30 questions</div>
+                            </div>
+
+                            <div class="mode-card" onclick="startCombinedAssessment()">
+                                <div class="mode-icon">🧩</div>
+                                <div class="mode-title">Combined Assessment</div>
+                                <div class="mode-description">Math and Reading sections with separate results</div>
+                                <div class="mode-meta">Two subject scores</div>
+                            </div>
+
+                            <!-- Endless Mode -->
+                            <div class="mode-card" onclick="startEndlessMode()">
+                                <div class="mode-icon">♾️</div>
+                                <div class="mode-title">Endless Mode</div>
+                                <div class="mode-description">Questions keep going until you stop</div>
+                                <div class="mode-meta">Track your streak</div>
+                            </div>
+
+                            <!-- Question Bank -->
+                            <div class="mode-card" onclick="startQuestionBank()">
+                                <div class="mode-icon">🏦</div>
+                                <div class="mode-title">Question Bank</div>
+                                <div class="mode-description">Browse and practice specific topics</div>
+                                <div class="mode-meta">Thousands of questions</div>
+                            </div>
+
+                            <!-- Review Mistakes -->
+                            <div class="mode-card" onclick="startReviewMistakes()">
+                                <div class="mode-icon">❌</div>
+                                <div class="mode-title">Review Mistakes</div>
+                                <div class="mode-description">Practice questions you got wrong</div>
+                                <div class="mode-meta" id="mistakesCount">0 mistakes</div>
+                            </div>
+
+                            <!-- Daily Challenge -->
+                            <div class="mode-card" onclick="startDailyChallenge()">
+                                <div class="mode-icon">🎪</div>
+                                <div class="mode-title">Daily Challenge</div>
+                                <div class="mode-description">New mixed questions every day</div>
+                                <div class="mode-meta" id="dailyStatus">New challenge available</div>
+                            </div>
+
+                            <!-- AI Tutor -->
+                            <div class="mode-card" onclick="startAITutor()">
+                                <div class="mode-icon">🤖</div>
+                                <div class="mode-title">AI Tutor</div>
+                                <div class="mode-description">Ask questions about any topic</div>
+                                <div class="mode-meta">Get personalized help</div>
+                            </div>
+
+                            <!-- Progress/Stats -->
+                            <div class="mode-card" onclick="goToStats()">
+                                <div class="mode-icon">📈</div>
+                                <div class="mode-title">Progress</div>
+                                <div class="mode-description">View detailed performance analytics</div>
+                                <div class="mode-meta">See your growth</div>
+                            </div>
+
+                            <!-- Dictionary -->
+                            <div class="mode-card" onclick="toggleGlossary()">
+                                <div class="mode-icon">📖</div>
+                                <div class="mode-title">Dictionary</div>
+                                <div class="mode-description">Math and reading terms explained</div>
+                                <div class="mode-meta">Instant lookup</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recently Studied -->
+                    <div class="recently-studied-section">
+                        <h2>Recently Studied</h2>
+                        <div id="recentlyStudied" class="recent-topics">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== STUDY MODE SCREEN ========== -->
+            <div id="studyModeScreen" class="screen">
+                <div class="study-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Study Mode</h2>
+                        <div class="topic-selector">
+                            <select id="studySubject" onchange="updateStudyTopics()">
+                                <option value="math">Math</option>
+                                <option value="reading">Reading</option>
+                            </select>
+                            <select id="studyGrade" onchange="updateStudyTopics()">
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                            </select>
+                            <select id="studyTopic" onchange="loadStudyContent()">
+                                <option value="">Select a topic...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="studyContentArea" class="study-content-area">
+                        <div class="study-placeholder">Select a topic to begin</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== PRACTICE MODE SCREEN ========== -->
+            <div id="practiceModeScreen" class="screen">
+                <div class="practice-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Practice Mode</h2>
+                    </div>
+
+                    <div id="practiceSetup" class="practice-setup">
+                        <div class="setup-section">
+                            <label>Subject</label>
+                            <div class="option-group">
+                                <button class="subject-btn" onclick="selectPracticeSubject('math')">📐 Math</button>
+                                <button class="subject-btn" onclick="selectPracticeSubject('reading')">📖 Reading</button>
+                            </div>
+                        </div>
+
+                        <div class="setup-section">
+                            <label>Grade Level</label>
+                            <select id="practiceGrade">
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9</option>
+                                <option value="all">All Grade Levels</option>
+                            </select>
+                        </div>
+
+                        <div class="setup-section">
+                            <label>Topic</label>
+                            <select id="practiceTopic">
+                                <option value="all">All Topics</option>
+                            </select>
+                        </div>
+
+                        <div class="setup-section">
+                            <label>Difficulty</label>
+                            <div class="option-group">
+                                <button class="difficulty-btn" onclick="selectPracticeDifficulty('easy')">Easy</button>
+                                <button class="difficulty-btn" onclick="selectPracticeDifficulty('medium')">Medium</button>
+                                <button class="difficulty-btn" onclick="selectPracticeDifficulty('hard')">Hard</button>
+                                <button class="difficulty-btn" onclick="selectPracticeDifficulty('mixed')">Mixed</button>
+                            </div>
+                        </div>
+
+                    <div class="setup-section">
+                            <label>Number of Questions</label>
+                            <div class="option-group">
+                                <button class="num-btn" onclick="selectPracticeCount(10)">10</button>
+                                <button class="num-btn" onclick="selectPracticeCount(15)">15</button>
+                                <button class="num-btn" onclick="selectPracticeCount(20)">20</button>
+                                <button class="num-btn" onclick="selectPracticeCount(25)">25</button>
+                                <button class="num-btn" onclick="selectPracticeCount(30)">30</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="startPracticeQuestions()">Start Practice</button>
+                    </div>
+
+                    <div id="practiceQuestions" class="practice-questions hidden">
+                        <!-- Questions displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== TEST MODE SCREEN ========== -->
+            <div id="testModeScreen" class="screen">
+                <div class="test-content">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <span id="testQuestionCounter">Question 1/20</span>
+                            <span id="testGradeLevel">Grade 7</span>
+                        </div>
+                        <div class="test-progress">
+                            <div id="testProgressBar" class="progress-bar">
+                                <div id="testProgressFill" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="testQuestionArea" class="test-question-area">
+                        <!-- Questions displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== ENDLESS MODE SCREEN ========== -->
+            <div id="endlessModeScreen" class="screen">
+                <div class="endless-content">
+                    <div class="endless-header">
+                        <button class="back-btn" onclick="stopEndlessMode()">Stop & See Results</button>
+                        <div class="endless-stats">
+                            <div class="stat-mini">Answered: <span id="endlessAnswered">0</span></div>
+                            <div class="stat-mini">Correct: <span id="endlessCorrect">0</span></div>
+                            <div class="stat-mini">Accuracy: <span id="endlessAccuracy">0%</span></div>
+                            <div class="stat-mini">Streak: <span id="endlessStreak">0</span></div>
+                        </div>
+                    </div>
+
+                    <div id="endlessQuestionArea" class="endless-question-area">
+                        <!-- Questions displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== QUESTION BANK SCREEN ========== -->
+            <div id="questionBankScreen" class="screen">
+                <div class="qbank-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Question Bank</h2>
+                    </div>
+
+                    <div class="qbank-filters">
+                        <select id="qbSubject" onchange="updateQBTopics()">
+                            <option value="math">Math</option>
+                            <option value="reading">Reading</option>
+                        </select>
+                        <select id="qbGrade">
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                        </select>
+                        <select id="qbTopic">
+                            <option value="all">All Topics</option>
+                        </select>
+                        <select id="qbDifficulty">
+                            <option value="all">All Difficulties</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <select id="qbQuestionType">
+                            <option value="all">All Question Types</option>
+                            <option value="Multiple choice">Multiple Choice</option>
+                            <option value="Passage-based">Passage Based</option>
+                        </select>
+                    </div>
+
+                    <div id="questionList" class="question-list">
+                        <!-- Questions displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== REVIEW MISTAKES SCREEN ========== -->
+            <div id="reviewMistakesScreen" class="screen">
+                <div class="review-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Review Your Mistakes</h2>
+                    </div>
+
+                    <div id="mistakesList" class="mistakes-list">
+                        <!-- Mistakes displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== DAILY CHALLENGE SCREEN ========== -->
+            <div id="dailyChallengeScreen" class="screen">
+                <div class="daily-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Daily Challenge</h2>
+                    </div>
+
+                    <div class="daily-info">
+                        <div id="dailyStreak" class="daily-stat">🔥 Streak: 0</div>
+                        <div id="dailyScore" class="daily-stat">Score: 0/10</div>
+                    </div>
+
+                    <div id="dailyQuestionArea" class="daily-question-area">
+                        <!-- Questions displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== AI TUTOR SCREEN ========== -->
+            <div id="aiTutorScreen" class="screen">
+                <div class="tutor-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>AI Tutor</h2>
+                    </div>
+
+                    <div class="tutor-interface">
+                        <div id="tutorChat" class="tutor-chat">
+                            <div class="tutor-message">
+                                <div class="message-bubble">Hello! I'm your AI Tutor powered by ChatGPT. Ask me anything about MAP test math or reading. What would you like to learn about?</div>
+                            </div>
+                        </div>
+
+                        <div class="tutor-input-area">
+                            <textarea id="tutorInput" placeholder="Ask a question... (e.g., 'Explain fractions' or 'What does infer mean?')" rows="2" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendTutorMessage();}"></textarea>
+                            <div class="tutor-input-buttons">
+                                <button class="btn-secondary" onclick="clearTutorChat()">Clear Chat</button>
+                                <button class="btn-primary" onclick="sendTutorMessage()">Ask</button>
+                            </div>
+                        </div>
+
+                        <div class="tutor-suggestions">
+                            <p>Try asking:</p>
+                            <div class="suggestion-btns">
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('What is a fraction?')">What is a fraction?</button>
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('How do I find the main idea?')">How do I find the main idea?</button>
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('Can you explain percentages?')">Explain percentages?</button>
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('Walk me through a quadratic equation step by step')">Quadratic equations</button>
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('What is the Pythagorean theorem?')">Pythagorean theorem</button>
+                                <button class="suggestion-btn" onclick="quickTutorQuestion('How do I make an inference from a passage?')">Reading inferences</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== STATS SCREEN ========== -->
+            <div id="statsScreen" class="screen">
+                <div class="stats-content">
+                    <div class="mode-header">
+                        <button class="back-btn" onclick="goToHome()">← Back</button>
+                        <h2>Your Progress</h2>
+                    </div>
+
+                    <div class="stats-overview">
+                        <div class="stat-box">
+                            <div class="stat-title">Questions Answered</div>
+                            <div class="stat-big" id="statsQuestionsTotal">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-title">Overall Accuracy</div>
+                            <div class="stat-big" id="statsOverallAccuracy">0%</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-title">Study Time</div>
+                            <div class="stat-big" id="statsStudyTime">0h</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-title">Best Streak</div>
+                            <div class="stat-big" id="statsBestStreak">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-charts">
+                        <div class="chart-container">
+                            <h3>Accuracy by Subject</h3>
+                            <canvas id="accuracyChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Topics Mastered</h3>
+                            <canvas id="topicsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stats-table">
+                        <h3>Topic Breakdown</h3>
+                        <table id="topicTable" class="stats-table-data">
+                            <thead>
+                                <tr>
+                                    <th>Topic</th>
+                                    <th>Questions</th>
+                                    <th>Accuracy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topicTableBody">
+                                <!-- Dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== GLOSSARY/DICTIONARY SCREEN ========== -->
+            <div id="glossaryScreen" class="screen">
+                <div class="glossary-content">
+                    <div class="glossary-header">
+                        <button class="close-btn" onclick="toggleGlossary()">✕</button>
+                        <h2>Dictionary & Glossary</h2>
+                        <input type="text" id="glossarySearch" placeholder="Search terms..." onkeyup="filterGlossary()">
+                    </div>
+
+                    <div id="glossaryList" class="glossary-list">
+                        <!-- Terms displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== RESULTS SCREEN ========== -->
+            <div id="resultsScreen" class="screen">
+                <div class="results-content">
+                    <div class="results-header">
+                        <h2>Results</h2>
+                    </div>
+
+                    <div class="results-summary">
+                        <div class="result-box">
+                            <div class="result-label">Estimated RIT</div>
+                            <div class="result-value" id="resultMapScore">240</div>
+                            <div class="result-sublabel" id="resultRitRange">Range: 235–245</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Estimated Percentile</div>
+                            <div class="result-value" id="resultPercentile">50</div>
+                            <div class="result-sublabel">(unofficial)</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Accuracy</div>
+                            <div class="result-value" id="resultAccuracy">0%</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Questions Answered</div>
+                            <div class="result-value" id="resultQuestionsAnswered">0</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label">Correct Answers</div>
+                            <div class="result-value" id="resultCorrect">0</div>
+                        </div>
+                    </div>
+                    <p class="setting-desc" style="text-align:center;margin-top:-15px;margin-bottom:20px;">Unofficial practice estimate. This is not an official NWEA MAP Growth score.</p>
+
+                    <div class="results-details">
+                        <h3>Performance by Topic</h3>
+                        <div id="resultsByTopic" class="results-by-topic">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <div class="results-recommendations">
+                        <h3>Recommendations</h3>
+                        <div id="recommendations" class="recommendations-list">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <div class="results-actions">
+                        <button class="btn-primary" onclick="goToHome()">Return Home</button>
+                        <button class="btn-secondary" onclick="restartMode()">Try Again</button>
+                        <button class="btn-secondary" onclick="reviewResults()">Review Answers</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== SETTINGS SCREEN ========== -->
+            <div id="settingsScreen" class="screen">
+                <div class="settings-content">
+                    <div class="settings-header">
+                        <button class="close-btn" onclick="toggleSettings()">✕</button>
+                        <h2>Settings</h2>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>User Data</h3>
+                        <button class="btn-secondary" onclick="clearAllData()">Clear All Data</button>
+                        <p class="setting-desc">This will reset all progress, scores, and statistics.</p>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>API Configuration</h3>
+                        <label>OpenAI API Key (for AI Tutor)</label>
+                        <input type="password" id="apiKeyInput" placeholder="sk-...">
+                        <button class="btn-secondary" onclick="saveAPIKey()">Save API Key</button>
+                        <p class="setting-desc">Get a key at <strong>platform.openai.com</strong>. The AI Tutor uses <strong>GPT-4o mini</strong> (cheap and fast). Your key is stored only in this browser, never sent anywhere except OpenAI.</p>
+                        <p class="setting-desc" id="apiKeyStatus"></p>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>About</h3>
+                        <p>MAP Prep Platform v1.0</p>
+                        <p class="setting-desc">A comprehensive study platform for MAP Growth assessments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator hidden">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Overlay for modals -->
+    <div id="overlay" class="overlay" onclick="closeAllModals()"></div>
+
+    <script src="questions-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
